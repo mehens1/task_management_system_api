@@ -61,7 +61,6 @@ class UserLoginView(ObtainAuthToken):
                 'user': user_data
         }, status=status.HTTP_202_ACCEPTED)
     
-    
 class CategoryListView(generics.ListCreateAPIView):
     serializer_class = CategorySerializer
     permission_classes = [permissions.IsAuthenticated]
