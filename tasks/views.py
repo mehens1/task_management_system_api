@@ -1,4 +1,5 @@
-from django.http import Http404, HttpResponse
+from rest_framework.views import APIView
+from django.http import Http404
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework import status
@@ -10,10 +11,6 @@ from rest_framework.settings import api_settings
 from rest_framework import serializers
 from .models import Task, Category
 from task_management.serializers import TaskSerializer, CategorySerializer
-
-
-def home(request):
-    return HttpResponse("Welcome to the Task Management System API! This is Samson Meheni's ALX Capstone Project, you can login to continue!")
 
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
@@ -89,7 +86,6 @@ class CategoryListView(generics.ListCreateAPIView):
                 'data': serialized_data
         }, status=status.HTTP_200_OK)
 
-
 class CategoryCreateView(generics.CreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -133,6 +129,30 @@ class CategoryDeleteView(generics.DestroyAPIView):
                 'message': 'Category deleted successfully.'
             }, status=status.HTTP_202_ACCEPTED)
 
+class CategoryUpdateView(generics.UpdateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Category.objects.filter(user=self.request.user)
+    
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response({
+            'status': True,
+            'status_code': status.HTTP_200_OK,
+            'message': 'Category updated successfully.',
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
+
+
+
 
 class TaskListView(generics.ListAPIView):
     serializer_class = TaskSerializer
@@ -160,7 +180,6 @@ class TaskListView(generics.ListAPIView):
                 'data': serialized_data
         }, status=status.HTTP_200_OK)
 
-
 class TaskCreateView(generics.CreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
@@ -179,13 +198,28 @@ class TaskCreateView(generics.CreateAPIView):
             'message': 'Task created successfully.',
             'data': serializer.data
         }, status=status.HTTP_201_CREATED)
-    
-
 
 class TaskUpdateView(generics.UpdateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Task.objects.filter(user=self.request.user)
+    
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response({
+            'status': True,
+            'status_code': status.HTTP_200_OK,
+            'message': 'Task updated successfully.',
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
 
 class TaskDeleteView(generics.DestroyAPIView):
     queryset = Task.objects.all()

@@ -87,13 +87,14 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class TaskSerializer(serializers.ModelSerializer):
     category_id = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), source='category')
-    
+
     class Meta:
         model = Task
         fields = [
             'id', 'title', 'description', 'is_reoccurring', 'created_at', 'updated_at',
             'user_id', 'completed_at', 'due_date', 'priority_level', 'status', 'category_id'
         ]
+        read_only_fields = ['id', 'updated_at', 'completed_at']
         extra_kwargs = {
             'title': {'required': True},
             'description': {'required': True},

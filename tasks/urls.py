@@ -1,8 +1,8 @@
 from django.urls import path
-from . import views
-from .views import CategoryListView, TaskCreateView, TaskDeleteView, TaskListView, TaskUpdateView, UserRegistrationView, UserLoginView, CategoryCreateView, CategoryDeleteView
+from .views import CategoryListView, TaskCreateView, TaskDeleteView, TaskListView, TaskUpdateView, UserRegistrationView, UserLoginView, CategoryCreateView, CategoryDeleteView, CategoryUpdateView
 
 urlpatterns = [
+
     # auth routes
     path('register', UserRegistrationView.as_view(), name='register'),
     path('login', UserLoginView.as_view(), name='login'),
@@ -17,5 +17,6 @@ urlpatterns = [
     path('categories', CategoryListView.as_view(), name='category-list'),
     path('category/create', CategoryCreateView.as_view(), name='category-create'),
     path('category/<int:pk>/delete', CategoryDeleteView.as_view(), name='category-delete'),
+    path('category/<int:pk>/update', CategoryUpdateView.as_view(), name='category-update'),
 ]
 
