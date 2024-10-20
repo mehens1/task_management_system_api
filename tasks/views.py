@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework import status
@@ -109,6 +109,30 @@ class CategoryCreateView(generics.CreateAPIView):
             'data': serializer.data
         }, status=status.HTTP_201_CREATED)
 
+class CategoryDeleteView(generics.DestroyAPIView):
+    queryset = Category.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Category.objects.filter(user=self.request.user)
+    
+    def delete(self, request, *args, **kwargs):
+        try:
+            category = self.get_object()
+        except Http404:
+            return Response({
+                'status': False,
+                'status_code': status.HTTP_404_NOT_FOUND,
+                'message': 'Category not found or you do not have permission to delete it.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        self.perform_destroy(category)
+        return Response({
+                'status': True,
+                'status_code': status.HTTP_202_ACCEPTED,
+                'message': 'Category deleted successfully.'
+            }, status=status.HTTP_202_ACCEPTED)
+
 
 class TaskListView(generics.ListAPIView):
     serializer_class = TaskSerializer
@@ -166,3 +190,23 @@ class TaskUpdateView(generics.UpdateAPIView):
 class TaskDeleteView(generics.DestroyAPIView):
     queryset = Task.objects.all()
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Task.objects.filter(user=self.request.user)
+    
+    def delete(self, request, *args, **kwargs):
+        try:
+            task = self.get_object()
+        except Http404:
+            return Response({
+                'status': False,
+                'status_code': status.HTTP_404_NOT_FOUND,
+                'message': 'Task not found or you do not have permission to delete it.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        self.perform_destroy(task)
+        return Response({
+                'status': True,
+                'status_code': status.HTTP_202_ACCEPTED,
+                'message': 'Task deleted successfully.'
+            }, status=status.HTTP_202_ACCEPTED)

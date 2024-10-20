@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import CategoryListView, TaskCreateView, TaskDeleteView, TaskListView, TaskUpdateView, UserRegistrationView, UserLoginView, CategoryCreateView
+from .views import CategoryListView, TaskCreateView, TaskDeleteView, TaskListView, TaskUpdateView, UserRegistrationView, UserLoginView, CategoryCreateView, CategoryDeleteView
 
 urlpatterns = [
     # auth routes
@@ -10,11 +10,12 @@ urlpatterns = [
     # task routes
     path('tasks', TaskListView.as_view(), name='task-list'),
     path('task/create', TaskCreateView.as_view(), name='task-create'),
-    path('tasks/<int:pk>/update', TaskUpdateView.as_view(), name='task-update'),
-    path('tasks/<int:pk>/delete', TaskDeleteView.as_view(), name='task-delete'),
+    path('task/<int:pk>/update', TaskUpdateView.as_view(), name='task-update'),
+    path('task/<int:pk>/delete', TaskDeleteView.as_view(), name='task-delete'),
 
     # categories route
     path('categories', CategoryListView.as_view(), name='category-list'),
     path('category/create', CategoryCreateView.as_view(), name='category-create'),
+    path('category/<int:pk>/delete', CategoryDeleteView.as_view(), name='category-delete'),
 ]
 
